@@ -3,6 +3,7 @@ experiments/
 checkpoint/
 temporary/
 data/
+old/
 *.pth
 *.tar
 *.zip
