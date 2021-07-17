@@ -11,7 +11,6 @@ import utils
 
 
 class ClassifierAgent:
-
     def __init__(self, args):
         self.args = args
         self.epoch = None

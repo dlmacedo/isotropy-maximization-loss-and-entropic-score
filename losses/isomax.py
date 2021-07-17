@@ -15,7 +15,7 @@ class IsoMaxLossFirstPart(nn.Module):
     def forward(self, features):
         distances = F.pairwise_distance(features.unsqueeze(2), self.prototypes.t().unsqueeze(0), p=2.0)
         logits = -distances
-        print("isomax loss first part")
+        #print("isomax loss first part")
         return logits
 
 
@@ -28,19 +28,19 @@ class IsoMaxLossSecondPart(nn.Module):
 
     def forward(self, logits, targets, debug=False):
         """Logarithms and probabilities are calculate separately and sequentially"""
-        probabilities_for_training = nn.Softmax(dim=1)(self.entropic_scale * logits[:len(targets)])
+        probabilities_for_training = nn.Softmax(dim=1)(self.entropic_scale * logits)
         probabilities_at_targets = probabilities_for_training[range(logits.size(0)), targets]
         loss = -torch.log(probabilities_at_targets).mean()
-        print("isomax loss second part")
+        #print("isomax loss second part")
         if not debug:
             return loss
         else:
             targets_one_hot = torch.eye(self.model_classifier.prototypes.size(0))[targets].long().cuda()
-            intra_inter_logits = torch.where(targets_one_hot != 0, -logits[:len(targets)], torch.Tensor([float('Inf')]).cuda())
-            inter_intra_logits = torch.where(targets_one_hot != 0, torch.Tensor([float('Inf')]).cuda(), -logits[:len(targets)])
+            intra_inter_logits = torch.where(targets_one_hot != 0, -logits, torch.Tensor([float('Inf')]).cuda())
+            inter_intra_logits = torch.where(targets_one_hot != 0, torch.Tensor([float('Inf')]).cuda(), -logits)
             intra_logits = intra_inter_logits[intra_inter_logits != float('Inf')]
             inter_logits = inter_intra_logits[inter_intra_logits != float('Inf')]
-            cls_probabilities = nn.Softmax(dim=1)(self.entropic_scale * logits[:len(targets)])
-            ood_probabilities = nn.Softmax(dim=1)(logits[:len(targets)])
-            max_logits = logits[:len(targets)].max(dim=1)[0]
+            cls_probabilities = nn.Softmax(dim=1)(self.entropic_scale * logits)
+            ood_probabilities = nn.Softmax(dim=1)(logits)
+            max_logits = logits.max(dim=1)[0]
             return loss, cls_probabilities, ood_probabilities, max_logits, intra_logits, inter_logits
