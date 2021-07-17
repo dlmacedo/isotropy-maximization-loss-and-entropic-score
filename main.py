@@ -41,8 +41,8 @@ random.seed(args.base_seed)
 numpy.random.seed(args.base_seed)
 torch.manual_seed(args.base_seed)
 torch.cuda.manual_seed(args.base_seed)
-#cudnn.benchmark = False
-cudnn.deterministic = True
+cudnn.benchmark = False
+#cudnn.deterministic = True
 
 args.exps_inputs = args.exps_inputs.split(":")
 args.exps_types = args.exps_types.split(":")

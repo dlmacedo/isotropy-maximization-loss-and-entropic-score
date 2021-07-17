@@ -37,7 +37,6 @@ class LambdaLayer(nn.Module):
 
 class BasicBlock(nn.Module):
     expansion = 1
-
     def __init__(self, in_planes, planes, stride=1, option='A'):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
@@ -51,8 +50,7 @@ class BasicBlock(nn.Module):
                 """
                 For CIFAR10 ResNet paper uses option A.
                 """
-                self.shortcut = LambdaLayer(lambda x:
-                                            F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
+                self.shortcut = LambdaLayer(lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
             elif option == 'B':
                 self.shortcut = nn.Sequential(
                      nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
